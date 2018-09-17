@@ -36,33 +36,30 @@
 // }
 
 $(function () {
-  // socket.io 서버에 접속한다
   var socket = io();
 
-  // 서버로 자신의 정보를 전송한다.
+  // login part
   socket.emit("login", {
     sender: $('#sender').val(),
     color: $('color').val()
   });
 
-  // 서버로부터의 메시지가 수신되면
+  // login event in chat body
   socket.on("login", function (data) {
     $("#chatBody").append(`<div><strong>${data}</strong> has joined</div>`);
   });
 
-  socket.emit()
-
-  // 서버로부터의 메시지가 수신되면
+  // print message in chat body
   socket.on('msg', function (data) {
     $('#chatBody').append(`<li style="color: ${data.color};">${data.sender} - ${data.desc}</li>`);
     $('#scrollBox')[0].scrollTop = $('#scrollBox')[0].scrollHeight;
   });
 
-  // Send 버튼이 클릭되면
+  // submit event on form
   $('form').submit(function (e) {
     e.preventDefault();
     var desc = $('#desc');
-    // 서버로 메시지를 전송한다.
+
     socket.emit('send', {
       sender: $('#sender').val(),
       desc: desc.val(),
@@ -82,6 +79,7 @@ function generateUID() {
   return firstPart + secondPart;
 }
 
+// for writing
 function getRandomColor() {
   var letters = '0123456789ABCDEF';
   var color = '#';
