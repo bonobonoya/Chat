@@ -1,0 +1,18 @@
+extends layout
+
+block content
+  script(src='/socket.io/socket.io.js')
+  script(src='/javascripts/packetManage.js')
+  h1(style='text-align: center;') Chat
+  | Name 
+  input#sender(type='text')
+  input#color(type='hidden')
+  script.
+    $('#sender').attr('value', generateUID());
+    $('#color').attr('value', getRandomColor());
+  #scrollBox(style='height:300px;width:400px;border:2px solid #000000;font:16px/18px Georgia, Serif;overflow:auto;')
+    ul#chatBody
+  | Text 
+  form(style="display: inline;")
+    input#desc(type='text', autocomplete='off')
+    button(type="submit") Send
