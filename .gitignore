@@ -1,7 +1,9 @@
-/chat/
+chat/
 
-/node_modules/
+node_modules/
 
-/sessions
+sessions/
 
 /package-lock.json
+
+/keys.json
