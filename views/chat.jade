@@ -8,8 +8,8 @@ block content
   input#sender(type='text')
   input#color(type='hidden')
   script.
-    $('#sender').attr('value', generateUID());
     $('#color').attr('value', getRandomColor());
+    connectSocket();
   #scrollBox(style='height:300px;width:400px;border:2px solid #000000;overflow:auto;')
     ul#chatBody
   | Text 
