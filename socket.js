@@ -45,7 +45,6 @@ module.exports = function (server) {
     });
 
     socket.on('send', function (data) {
-      console.log(users);
       var timeStamp = new Date().toLocaleString();
       var address = socket.handshake.address
       data.desc = sanitizeHTML(data.desc);

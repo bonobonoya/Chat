@@ -26,9 +26,7 @@ $(function () {
     var desc = $('#desc');
 
     socket.emit('send', {
-      name: $('#name').val(),
-      desc: desc.val(),
-      color: $('#color').val()
+      desc: desc.val()
     });
 
     desc.val('');
