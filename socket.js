@@ -31,7 +31,7 @@ module.exports = function (server) {
         color: getRandomColor()
       }
       while (user.sender in users) {
-        user.sender = generateUID()
+        user.sender = generateUID();
       }
       io.emit('login', user);
     });
