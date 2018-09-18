@@ -23,30 +23,34 @@ function getRandomColor() {
 
 module.exports = function (server) {
   var io = require('socket.io').listen(server);
+
   var users = {};
+  
   io.on('connection', function (socket) {
     socket.on('login', function (data) {
       var user = {
-        sender: generateUID(),
+        name: generateUID(),
         color: getRandomColor()
       }
-      while (user.sender in users) {
-        user.sender = generateUID();
+      while (user.name in users) {
+        user.name = generateUID();
       }
+      users[socket.id] = user;
       io.emit('login', user);
     });
 
     socket.on('send', function (data) {
+      console.log(users);
       var timeStamp = new Date().toLocaleString();
       var address = socket.handshake.address
       data.desc = sanitizeHTML(data.desc);
       setTimeout(function () {
-        fs.appendFileSync('log/chat', `[${timeStamp.toLocaleString()}] ${data.sender}(${address}) - ${data.desc}\n`)
+        fs.appendFileSync('log/chat', `[${timeStamp.toLocaleString()}] ${data.name}(${address}) - ${data.desc}\n`)
       }, 0);
       io.emit('msg', {
-        sender: data.sender,
+        name: users[socket.id].name,
         desc: data.desc,
-        color: data.color
+        color: users[socket.id].color
       });
     });
   });
