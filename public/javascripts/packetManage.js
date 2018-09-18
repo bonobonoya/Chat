@@ -9,6 +9,7 @@ $(function () {
     $('#name').attr('value', data.name);
     $('#color').attr('value', data.color);
     $("#chatBody").append(`<div><strong style="color:${data.color}">${data.name}</strong> has joined</div>`);
+    $('#scrollBox')[0].scrollTop = $('#scrollBox')[0].scrollHeight;
   });
 
   // print message in chat body
@@ -19,6 +20,7 @@ $(function () {
 
   socket.on('logout', function (data) {
     $("#chatBody").append(`<div><strong style="color:${data.color}">${data.name}</strong> has left</div>`);
+    $('#scrollBox')[0].scrollTop = $('#scrollBox')[0].scrollHeight;
   });
   // submit event on form
   $('#send').submit(function (e) {
