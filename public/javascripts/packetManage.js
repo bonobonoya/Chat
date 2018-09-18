@@ -17,6 +17,9 @@ $(function () {
     $('#scrollBox')[0].scrollTop = $('#scrollBox')[0].scrollHeight;
   });
 
+  socket.on('logout', function (data) {
+    $("#chatBody").append(`<div><strong style="color:${data.color}">${data.name}</strong> has left</div>`);
+  });
   // submit event on form
   $('#send').submit(function (e) {
     e.preventDefault();

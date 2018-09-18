@@ -24,8 +24,13 @@ function getRandomColor() {
 module.exports = function (server) {
   var io = require('socket.io').listen(server);
 
-  var users = {};
-  
+  var users = {
+    test: {
+      name: 'testName',
+      color: 'testColor'
+    }
+  };
+
   io.on('connection', function (socket) {
     socket.on('login', function (data) {
       var user = {
@@ -52,6 +57,11 @@ module.exports = function (server) {
         desc: data.desc,
         color: users[socket.id].color
       });
+    });
+
+    socket.on('disconnect', function (reason) {
+      io.emit('logout', users[socket.id]);
+      delete users[socket.id];
     });
   });
 }
