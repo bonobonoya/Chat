@@ -8,9 +8,6 @@ var app = require('../app');
 var debug = require('debug')('nodejs-chat:server');
 var http = require('http');
 
-var fs = require('fs');
-var sanitizeHTML = require('sanitize-html');
-
 /**
  * Get port from environment and store in Express.
  */
@@ -24,27 +21,8 @@ app.set('port', port);
 
 var server = http.createServer(app);
 
-var io = require('socket.io').listen(server);
-
-io.on('connection', function (socket) {
-  socket.on('login', function (data) {
-    io.emit('login', data.sender);
-  });
-
-  socket.on('send', function (data) {
-    var timeStamp = new Date().toLocaleString();
-    var address = socket.handshake.address
-    data.desc = sanitizeHTML(data.desc);
-    setTimeout(function () {
-      fs.appendFileSync('chat/log', `[${timeStamp.toLocaleString()}] ${data.sender}(${address}) - ${data.desc}\n`)
-    }, 0);
-    io.emit('msg', {
-      sender: data.sender,
-      desc: data.desc,
-      color: data.color
-    });
-  });
-});
+// socket.io
+require('../socket')(server);
 
 /**
  * Listen on provided port, on all network interfaces.
