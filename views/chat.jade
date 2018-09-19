@@ -5,12 +5,14 @@ block content
   script(src='/javascripts/packetManage.js')
   h1(style='text-align: center;') Chat
   | Name 
-  input#name(type='text')
+  form#changeName(style="display: inline;")
+    input#name(type='text')
+    button(type="submit") Change
   input#color(type='hidden')
   script.
     $('#color').attr('value', getRandomColor());
   #scrollBox(style='height:300px;width:400px;border:2px solid #000000;overflow:auto;')
-    ul#chatBody
+    div#chatBody
   | Text 
   form#send(style="display: inline;")
     input#desc(type='text', autocomplete='off')

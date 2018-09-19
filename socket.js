@@ -23,7 +23,7 @@ function getRandomColor() {
 
 module.exports = function (server) {
   var io = require('socket.io').listen(server);
-
+  
   var users = {
     test: {
       name: 'testName',
@@ -56,6 +56,22 @@ module.exports = function (server) {
         desc: data.desc,
         color: users[socket.id].color
       });
+    });
+
+    socket.on('changeName', function (data) {
+      for (key in users) {
+        if (users[key].name === data.name) {
+          return socket.emit('changeName', {
+            error: "already has name"
+          });
+        }
+      }
+      io.emit('changeName', {
+        before: users[socket.id].name,
+        after: data.name,
+        color: users[socket.id].color
+      });
+      users[socket.id].name = data.name;
     });
 
     socket.on('disconnect', function (reason) {
