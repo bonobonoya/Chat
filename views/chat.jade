@@ -11,8 +11,11 @@ block content
   input#color(type='hidden')
   script.
     $('#color').attr('value', getRandomColor());
-  #scrollBox(style='height:300px;width:400px;border:2px solid #000000;overflow:auto;')
-    div#chatBody
+  div
+    #scrollBox(style='display: inline-block; height: 300px; width: 350px; border: 2px solid #000000; overflow: auto;')
+      div#chatBody
+    #userListBox(style='display: inline-block; height: 300px; width: 80px; border: 2px solid #000000; overflow: auto;')
+      div#userListBody
   | Text 
   form#send(style="display: inline;")
     input#desc(type='text', autocomplete='off')

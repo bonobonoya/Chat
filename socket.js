@@ -23,7 +23,7 @@ function getRandomColor() {
 
 module.exports = function (server) {
   var io = require('socket.io').listen(server);
-  
+
   var users = {
     test: {
       name: 'testName',
@@ -32,6 +32,14 @@ module.exports = function (server) {
   };
 
   io.on('connection', function (socket) {
+    function updateUserList() {
+      var userList = [];
+      for (key in users) {
+        userList.push(users[key]);
+      }
+      io.emit('updateUserList', userList);
+    }
+
     socket.on('login', function (data) {
       var user = {
         name: generateUID(),
@@ -42,7 +50,10 @@ module.exports = function (server) {
       }
       users[socket.id] = user;
       io.emit('login', user);
+      updateUserList();
     });
+
+
 
     socket.on('send', function (data) {
       var timeStamp = new Date().toLocaleString();
@@ -77,6 +88,7 @@ module.exports = function (server) {
     socket.on('disconnect', function (reason) {
       io.emit('logout', users[socket.id]);
       delete users[socket.id];
+      updateUserList()
     });
   });
 }
