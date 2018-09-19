@@ -15,6 +15,7 @@ $(function () {
 
   socket.on('updateUserList', function (data) {
     $('#userListBody').html('');
+    $('#userListBody').append(`<div>Total: ${data.length}</div>`)
     for (i in data) {
       $('#userListBody').append(`<div style="color:${data[i].color}">${data[i].name}</div>`)
     }
