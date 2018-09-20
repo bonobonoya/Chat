@@ -12,14 +12,11 @@ function generateUID() {
   return firstPart + secondPart;
 }
 
-function getRandomColor() {
-  var letters = '0123456789ABCDEF';
-  var color = '#';
-  for (var i = 0; i < 6; i++) {
-    color += letters[Math.floor(Math.random() * 16)];
-  }
-  return color;
-}
+var colors = [
+  '#e21400', '#91580f', '#f8a700', '#f78b00',
+  '#58dc00', '#287b00', '#a8f07a', '#4ae8c4',
+  '#3b88eb', '#3824aa', '#a700ff', '#d300e7'
+];
 
 module.exports = function (server) {
   var io = require('socket.io').listen(server);
@@ -38,7 +35,7 @@ module.exports = function (server) {
     socket.on('login', function (data) {
       var user = {
         name: generateUID(),
-        color: getRandomColor()
+        color: colors[Math.floor(Math.random() * 12)]
       }
       while (user.name in users) {
         user.name = generateUID();
