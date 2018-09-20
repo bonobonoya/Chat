@@ -65,10 +65,16 @@ module.exports = function (server) {
     });
 
     socket.on('changeName', function (data) {
+      data.name = sanitizeHTML(data.name);
+      if (!data.name.length) {
+        return socket.emit('changeName', {
+          error: "invalid name."
+        });
+      }
       for (key in users) {
         if (users[key].name === data.name) {
           return socket.emit('changeName', {
-            error: "already has name"
+            error: "already has name."
           });
         }
       }
@@ -84,6 +90,10 @@ module.exports = function (server) {
     socket.on('disconnect', function (reason) {
       io.emit('logout', users[socket.id]);
       delete users[socket.id];
+      updateUserList()
+    });
+
+    socket.on('connect_timeout', (timeout) => {
       updateUserList()
     });
   });
