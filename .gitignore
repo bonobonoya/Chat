@@ -7,3 +7,5 @@ sessions/
 /package-lock.json
 
 /keys.json
+
+/.eslintrc.js
