@@ -1,6 +1,7 @@
 var createError = require('http-errors');
 var express = require('express');
 var app = express();
+var fs = require('fs');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
@@ -28,6 +29,15 @@ app.use(session({
   resave: false,
   saveUninitialized: true
 }));
+app.use(function (req, res, next) {
+  if (!fs.existsSync(path.join(__dirname, 'log'))) {
+    fs.mkdirSync(path.join(__dirname, 'log'));
+  }
+  if (!fs.existsSync(path.join(__dirname, 'log/chat'))) {
+    fs.closeSync(fs.openSync(path.join(__dirname, 'log/chat'), 'w'));
+  }
+  next();
+});
 
 // routers
 app.use('/', indexRouter);
