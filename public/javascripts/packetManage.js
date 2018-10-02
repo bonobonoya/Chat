@@ -1,13 +1,13 @@
 $(function () {
   var socket = io();
   // login part
-  socket.emit("login", {});
+  socket.emit('login', {});
 
   // login event in chat body
-  socket.on("login", function (data) {
+  socket.on('login', function (data) {
     $('#name').attr('value', data.name);
     $('#color').attr('value', data.color);
-    $("#chatBody").append(`<div style="text-align: center;">
+    $('#chatBody').append(`<div style="text-align: center;">
       --- <strong style="color:${data.color}">${data.name}</strong> has joined ---
       </div>`);
     $('#scrollBox')[0].scrollTop = $('#scrollBox')[0].scrollHeight;
@@ -15,9 +15,9 @@ $(function () {
 
   socket.on('updateUserList', function (data) {
     $('#userListBody').html('');
-    $('#userListBody').append(`<div>Total: ${data.length}</div>`)
-    for (i in data) {
-      $('#userListBody').append(`<div style="color:${data[i].color}">${data[i].name}</div>`)
+    $('#userListBody').append(`<div>Total: ${data.length}</div>`);
+    for (var i in data) {
+      $('#userListBody').append(`<div style="color:${data[i].color}">${data[i].name}</div>`);
     }
   });
 
@@ -28,7 +28,7 @@ $(function () {
   });
 
   socket.on('logout', function (data) {
-    $("#chatBody").append(`<div style="text-align: center;">
+    $('#chatBody').append(`<div style="text-align: center;">
       --- <strong style="color:${data.color}">${data.name}</strong> has left ---
       </div>`);
     $('#scrollBox')[0].scrollTop = $('#scrollBox')[0].scrollHeight;
@@ -38,7 +38,7 @@ $(function () {
     if (data.error) {
       return alert(data.error);
     }
-    $("#chatBody").append(`<div style="text-align: center;">
+    $('#chatBody').append(`<div style="text-align: center;">
       --- <strong style="color:${data.color}">${data.before}</strong>'s
       change name to <strong style="color:${data.color}">${data.after}</strong> ---
       </div>`);
@@ -73,5 +73,5 @@ $(function () {
     socket.emit('changeName', {
       name: $('#name').val()
     });
-  })
+  });
 });

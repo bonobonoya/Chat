@@ -2,13 +2,13 @@ var fs = require('fs');
 var sanitizeHTML = require('sanitize-html');
 
 // for writing
-function generateUID() {
-  // I generate the UID from two parts here 
+function generateUID () {
+  // I generate the UID from two parts here
   // to ensure the random number provide enough bits.
   var firstPart = (Math.random() * 46656) | 0;
   var secondPart = (Math.random() * 46656) | 0;
-  firstPart = ("000" + firstPart.toString(36)).slice(-3);
-  secondPart = ("000" + secondPart.toString(36)).slice(-3);
+  firstPart = ('000' + firstPart.toString(36)).slice(-3);
+  secondPart = ('000' + secondPart.toString(36)).slice(-3);
   return firstPart + secondPart;
 }
 
@@ -24,9 +24,9 @@ module.exports = function (server) {
   var users = {};
 
   io.on('connection', function (socket) {
-    function updateUserList() {
+    function updateUserList () {
       var userList = [];
-      for (key in users) {
+      for (var key in users) {
         userList.push(users[key]);
       }
       io.emit('updateUserList', userList);
@@ -36,7 +36,7 @@ module.exports = function (server) {
       var user = {
         name: generateUID(),
         color: colors[Math.floor(Math.random() * 12)]
-      }
+      };
       while (user.name in users) {
         user.name = generateUID();
       }
@@ -45,14 +45,12 @@ module.exports = function (server) {
       updateUserList();
     });
 
-
-
     socket.on('send', function (data) {
       var timeStamp = new Date().toLocaleString();
-      var address = socket.handshake.address
+      var address = socket.handshake.address;
       data.desc = sanitizeHTML(data.desc);
       setTimeout(function () {
-        fs.appendFileSync('log/chat', `[${timeStamp.toLocaleString()}] ${data.name}(${address}) - ${data.desc}\n`)
+        fs.appendFileSync('log/chat', `[${timeStamp.toLocaleString()}] ${data.name}(${address}) - ${data.desc}\n`);
       }, 0);
       io.emit('msg', {
         name: users[socket.id].name,
@@ -65,13 +63,13 @@ module.exports = function (server) {
       data.name = sanitizeHTML(data.name);
       if (!data.name.length) {
         return socket.emit('changeName', {
-          error: "invalid name."
+          error: 'invalid name.'
         });
       }
-      for (key in users) {
+      for (var key in users) {
         if (users[key].name === data.name) {
           return socket.emit('changeName', {
-            error: "already has name."
+            error: 'already has name.'
           });
         }
       }
@@ -81,17 +79,17 @@ module.exports = function (server) {
         color: users[socket.id].color
       });
       users[socket.id].name = data.name;
-      updateUserList()
+      updateUserList();
     });
 
     socket.on('disconnect', function (reason) {
       io.emit('logout', users[socket.id]);
       delete users[socket.id];
-      updateUserList()
+      updateUserList();
     });
 
     socket.on('connect_timeout', (timeout) => {
-      updateUserList()
+      updateUserList();
     });
   });
-}
+};
