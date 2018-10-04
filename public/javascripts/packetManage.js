@@ -1,10 +1,10 @@
-$(function () {
-  var socket = io();
+$(() => {
+  const socket = io();
   // login part
   socket.emit('login', {});
 
   // login event in chat body
-  socket.on('login', function (data) {
+  socket.on('login', (data) => {
     $('#name').attr('value', data.name);
     $('#color').attr('value', data.color);
     $('#chatBody').append(`<div style="text-align: center;">
@@ -13,30 +13,30 @@ $(function () {
     $('#scrollBox')[0].scrollTop = $('#scrollBox')[0].scrollHeight;
   });
 
-  socket.on('updateUserList', function (data) {
+  socket.on('updateUserList', (data) => {
     $('#userListBody').html('');
     $('#userListBody').append(`<div>Total: ${data.length}</div>`);
-    for (var i in data) {
-      $('#userListBody').append(`<div style="color:${data[i].color}">${data[i].name}</div>`);
-    }
+    data.forEach((x) => {
+      $('#userListBody').append(`<div style="color:${x.color}">${x.name}</div>`);
+    });
   });
 
   // print message in chat body
-  socket.on('msg', function (data) {
+  socket.on('msg', (data) => {
     $('#chatBody').append(`<div style="color: ${data.color};">${data.name} - ${data.desc}</div>`);
     $('#scrollBox')[0].scrollTop = $('#scrollBox')[0].scrollHeight;
   });
 
-  socket.on('logout', function (data) {
+  socket.on('logout', (data) => {
     $('#chatBody').append(`<div style="text-align: center;">
       --- <strong style="color:${data.color}">${data.name}</strong> has left ---
       </div>`);
     $('#scrollBox')[0].scrollTop = $('#scrollBox')[0].scrollHeight;
   });
 
-  socket.on('changeName', function (data) {
+  socket.on('changeName', (data) => {
     if (data.error) {
-      return alert(data.error);
+      alert(data.error);
     }
     $('#chatBody').append(`<div style="text-align: center;">
       --- <strong style="color:${data.color}">${data.before}</strong>'s
@@ -45,33 +45,33 @@ $(function () {
   });
 
   // submit event on form
-  $('#send').submit(function (e) {
+  $('#send').submit((e) => {
     e.preventDefault();
-    var desc = $('#desc');
+    const desc = $('#desc');
 
     socket.emit('send', {
-      desc: desc.val()
+      desc: desc.val(),
     });
 
     desc.val('');
   });
 
-  $('#change').submit(function (e) {
+  $('#change').submit((e) => {
     e.preventDefault();
-    var desc = $('#desc');
+    const desc = $('#desc');
 
     socket.emit('send', {
-      desc: desc.val()
+      desc: desc.val(),
     });
 
     desc.val('');
   });
 
-  $('#changeName').submit(function (e) {
+  $('#changeName').submit((e) => {
     e.preventDefault();
 
     socket.emit('changeName', {
-      name: $('#name').val()
+      name: $('#name').val(),
     });
   });
 });

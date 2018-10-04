@@ -1,16 +1,19 @@
-var createError = require('http-errors');
-var express = require('express');
-var app = express();
-var fs = require('fs');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
-var session = require('express-session');
-var FileStore = require('session-file-store')(session);
+const createError = require('http-errors');
+const express = require('express');
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
-var chatRouter = require('./routes/chat');
+const app = express();
+const fs = require('fs');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
+const session = require('express-session');
+const FileStore = require('session-file-store')(session);
+
+const indexRouter = require('./routes/index');
+const usersRouter = require('./routes/users');
+const chatRouter = require('./routes/chat');
+
+const keys = require('./keys.json');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -19,17 +22,17 @@ app.set('view engine', 'jade');
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({
-  extended: false
+  extended: false,
 }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({
   store: new FileStore(),
-  secret: require('./keys.json').sessionKey,
+  secret: keys.sessionKey,
   resave: false,
-  saveUninitialized: true
+  saveUninitialized: true,
 }));
-app.use(function (req, res, next) {
+app.use((req, res, next) => {
   if (!fs.existsSync(path.join(__dirname, 'log'))) {
     fs.mkdirSync(path.join(__dirname, 'log'));
   }
@@ -45,12 +48,12 @@ app.use('/users', usersRouter);
 app.use('/chat', chatRouter);
 
 // catch 404 and forward to error handler
-app.use(function (req, res, next) {
+app.use((req, res, next) => {
   next(createError(404));
 });
 
 // error handler
-app.use(function (err, req, res, next) {
+app.use((err, req, res, next) => {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
@@ -58,6 +61,7 @@ app.use(function (err, req, res, next) {
   // render the error page
   res.status(err.status || 500);
   res.render('error');
+  next();
 });
 
 module.exports = app;
