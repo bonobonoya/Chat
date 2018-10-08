@@ -36,8 +36,8 @@ app.use((req, res, next) => {
   if (!fs.existsSync(path.join(__dirname, 'log'))) {
     fs.mkdirSync(path.join(__dirname, 'log'));
   }
-  if (!fs.existsSync(path.join(__dirname, 'log/chat'))) {
-    fs.closeSync(fs.openSync(path.join(__dirname, 'log/chat'), 'w'));
+  if (!fs.existsSync(path.join(__dirname, 'log/chat.log'))) {
+    fs.closeSync(fs.openSync(path.join(__dirname, 'log/chat.log'), 'w'));
   }
   next();
 });
