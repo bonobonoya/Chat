@@ -4,8 +4,14 @@ node_modules/
 
 sessions/
 
+.DS_Store/
+
 /package-lock.json
 
 /keys.json
 
 /.eslintrc.js
+
+/.test.html
+
+/encosystem.config.js
