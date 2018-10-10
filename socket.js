@@ -1,5 +1,8 @@
+const socketio = require('socket.io');
 const fs = require('fs');
 const sanitizeHTML = require('sanitize-html');
+const session = require('express-session');
+const FileStore = require('session-file-store')(session);
 
 // for writing
 function generateUID() {
@@ -18,34 +21,50 @@ const colors = [
   '#3b88eb', '#3824aa', '#a700ff', '#d300e7',
 ];
 
-const socketio = require('socket.io');
+const keys = require('./keys.json');
+
+const Session = session({
+  store: new FileStore(),
+  secret: keys.sessionKey,
+  resave: false,
+  saveUninitialized: true,
+});
 
 module.exports = (server) => {
   const io = socketio.listen(server);
   const users = {};
 
+  io.use((socket, next) => {
+    Session(socket.handshake, {}, next);
+  });
+
   io.on('connection', (socket) => {
+    const sessionData = socket.handshake.session;
+
     function updateUserList() {
       const userList = [];
       Object.keys(users).forEach((key) => {
         userList.push(users[key]);
       });
-      // for (const key in users) {
-      //   userList.push(users[key]);
-      // }
       io.emit('updateUserList', userList);
     }
 
     socket.on('login', () => {
-      const user = {
-        name: generateUID(),
-        color: colors[Math.floor(Math.random() * 12)],
-      };
-      while (user.name in users) {
-        user.name = generateUID();
+      if (sessionData.user) {
+        users[socket.id] = sessionData.user;
+        io.emit('login', sessionData.user);
+      } else {
+        const user = {
+          name: generateUID(),
+          color: colors[Math.floor(Math.random() * 12)],
+        };
+        while (user.name in users) {
+          user.name = generateUID();
+        }
+        sessionData.user = user;
+        users[socket.id] = user;
+        io.emit('login', user);
       }
-      users[socket.id] = user;
-      io.emit('login', user);
       updateUserList();
     });
 
