@@ -62,6 +62,7 @@ module.exports = (server) => {
           user.name = generateUID();
         }
         sessionData.user = user;
+        sessionData.save();
         users[socket.id] = user;
         io.emit('login', user);
       }
