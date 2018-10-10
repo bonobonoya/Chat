@@ -4,6 +4,8 @@ node_modules/
 
 sessions/
 
+.vscode/
+
 /package-lock.json
 
 /keys.json
