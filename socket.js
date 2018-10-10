@@ -83,14 +83,15 @@ module.exports = (server) => {
     });
 
     socket.on('changeName', (data) => {
+      const sanitizedName = sanitizeHTML(data.name);
       // data.name = sanitizeHTML(data.name);
-      if (!data.name.length) {
+      if (!sanitizedName.length) {
         socket.emit('changeName', {
           error: 'invalid name.',
         });
       }
       Object.keys(users).forEach((key) => {
-        if (users[key].name === data.name) {
+        if (users[key].name === sanitizedName) {
           socket.emit('changeName', {
             error: 'already has name.',
           });
@@ -105,10 +106,12 @@ module.exports = (server) => {
       // }
       io.emit('changeName', {
         before: users[socket.id].name,
-        after: data.name,
+        after: sanitizedName,
         color: users[socket.id].color,
       });
-      users[socket.id].name = data.name;
+      sessionData.user.name = sanitizedName;
+      sessionData.save();
+      users[socket.id].name = sanitizedName;
       updateUserList();
     });
 
