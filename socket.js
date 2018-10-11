@@ -1,5 +1,5 @@
 const socketio = require('socket.io');
-const fs = require('fs');
+// const fs = require('fs');
 const sanitizeHTML = require('sanitize-html');
 
 const session = require('express-session');
@@ -73,9 +73,15 @@ module.exports = (server, pool) => {
     socket.on('send', (data) => {
       const timeStamp = new Date().toLocaleString();
       const sanitizedDesc = sanitizeHTML(data.desc);
-      setTimeout(() => {
-        fs.appendFileSync('log/chat.log', `[${timeStamp.toLocaleString()}] ${data.name}(${socket.handshake.address}) - ${sanitizedDesc}\n`);
-      }, 0);
+      pool.getConnection((err, conn) => {
+        if (err) throw err;
+        conn.query('INSERT INTO chat_log(time, name, ip, msg) VALUES(?, ?, ?, ?)',
+          [timeStamp, users[socket.id].name, socket.handshake.address, sanitizedDesc],
+          (error) => {
+            conn.release();
+            if (error) throw error;
+          });
+      });
       io.emit('msg', {
         name: users[socket.id].name,
         desc: sanitizedDesc,
@@ -105,14 +111,14 @@ module.exports = (server, pool) => {
       //     });
       //   }
       // }
+      sessionData.user.name = sanitizedName;
+      sessionData.save();
+      users[socket.id].name = sanitizedName;
       io.emit('changeName', {
         before: users[socket.id].name,
         after: sanitizedName,
         color: users[socket.id].color,
       });
-      sessionData.user.name = sanitizedName;
-      sessionData.save();
-      users[socket.id].name = sanitizedName;
       updateUserList();
     });
 
