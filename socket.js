@@ -1,8 +1,10 @@
 const socketio = require('socket.io');
 const fs = require('fs');
 const sanitizeHTML = require('sanitize-html');
+
 const session = require('express-session');
-const FileStore = require('session-file-store')(session);
+// const FileStore = require('session-file-store')(session);
+const MySQLStore = require('express-mysql-session')(session);
 
 // for writing
 function generateUID() {
@@ -23,14 +25,13 @@ const colors = [
 
 const keys = require('./keys.json');
 
-const Session = session({
-  store: new FileStore(),
-  secret: keys.sessionKey,
-  resave: false,
-  saveUninitialized: true,
-});
-
-module.exports = (server) => {
+module.exports = (server, pool) => {
+  const Session = session({
+    store: new MySQLStore({}, pool),
+    secret: keys.sessionKey,
+    resave: false,
+    saveUninitialized: true,
+  });
   const io = socketio.listen(server);
   const users = {};
 
