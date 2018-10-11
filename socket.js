@@ -120,9 +120,5 @@ module.exports = (server) => {
       delete users[socket.id];
       updateUserList();
     });
-
-    socket.on('connect_timeout', () => {
-      updateUserList();
-    });
   });
 };
