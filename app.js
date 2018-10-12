@@ -27,10 +27,31 @@ const pool = mysql.createPool({
   port: '3306',
 });
 
+pool.getConnection((err, conn) => {
+  if (err) throw err;
+  conn.query(`CREATE TABLE IF NOT EXISTS chat_log(
+    time timestamp not null,
+    name char(32) not null,
+    ip char(32) not null,
+    msg text
+    )Engine='InnoDB' default charset='utf8'`, (error) => {
+    conn.release();
+    if (error) throw error;
+  });
+});
+
+const Session = session({
+  store: new MySQLStore({}, pool),
+  secret: keys.sessionKey,
+  resave: false,
+  saveUninitialized: true,
+});
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 app.set('pool', pool);
+app.set('session', Session);
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -39,12 +60,7 @@ app.use(express.urlencoded({
 }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(session({
-  store: new MySQLStore({}, pool),
-  secret: keys.sessionKey,
-  resave: false,
-  saveUninitialized: true,
-}));
+app.use(Session);
 app.use((req, res, next) => {
   if (!fs.existsSync(path.join(__dirname, 'log'))) {
     fs.mkdirSync(path.join(__dirname, 'log'));
