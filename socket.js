@@ -1,9 +1,7 @@
 const socketio = require('socket.io');
-// const fs = require('fs');
 const sanitizeHTML = require('sanitize-html');
 
 const session = require('express-session');
-// const FileStore = require('session-file-store')(session);
 const MySQLStore = require('express-mysql-session')(session);
 
 // for writing
@@ -92,7 +90,6 @@ module.exports = (server, pool) => {
     socket.on('changeName', (data) => {
       const sanitizedName = sanitizeHTML(data.name);
       const originName = users[socket.id].name;
-      // data.name = sanitizeHTML(data.name);
       if (!sanitizedName.length) {
         socket.emit('changeName', {
           error: 'invalid name.',
@@ -105,13 +102,6 @@ module.exports = (server, pool) => {
           });
         }
       });
-      // for (const key in users) {
-      //   if (users[key].name === data.name) {
-      //     return socket.emit('changeName', {
-      //       error: 'already has name.',
-      //     });
-      //   }
-      // }
       sessionData.user.name = sanitizedName;
       sessionData.save();
       users[socket.id].name = sanitizedName;
