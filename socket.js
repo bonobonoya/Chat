@@ -37,6 +37,17 @@ module.exports = (server, Session, pool) => {
       io.emit('updateUserList', userList);
     }
 
+    socket.on('getLatestMsg', () => {
+      pool.getConnection((err, conn) => {
+        if (err) throw err;
+        conn.query('SELECT name, msg FROM chat_log ORDER BY time DESC LIMIT 10', (error, result) => {
+          conn.release();
+          if (error) throw error;
+          socket.emit('latestMsg', result);
+        });
+      });
+    });
+
     socket.on('login', () => {
       if (sessionData.user) {
         users[socket.id] = sessionData.user;

@@ -1,7 +1,14 @@
 $(() => {
   const socket = io();
   // login part
-  socket.emit('login', {});
+
+  socket.emit('getLatestMsg');
+  socket.on('latestMsg', (data) => {
+    data.reverse().forEach((x) => {
+      $('#chatBody').append(`<div>${x.name} - ${x.msg}</div>`);
+    });
+    socket.emit('login');
+  });
 
   // login event in chat body
   socket.on('login', (data) => {
