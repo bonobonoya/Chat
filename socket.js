@@ -91,6 +91,7 @@ module.exports = (server, pool) => {
 
     socket.on('changeName', (data) => {
       const sanitizedName = sanitizeHTML(data.name);
+      const originName = users[socket.id].name;
       // data.name = sanitizeHTML(data.name);
       if (!sanitizedName.length) {
         socket.emit('changeName', {
@@ -115,7 +116,7 @@ module.exports = (server, pool) => {
       sessionData.save();
       users[socket.id].name = sanitizedName;
       io.emit('changeName', {
-        before: users[socket.id].name,
+        before: originName,
         after: sanitizedName,
         color: users[socket.id].color,
       });
