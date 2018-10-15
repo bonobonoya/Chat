@@ -44,11 +44,12 @@ $(() => {
   socket.on('changeName', (data) => {
     if (data.error) {
       alert(data.error);
+    } else {
+      $('#chatBody').append(`<div style="text-align: center;">
+        --- <strong style="color:${data.color}">${data.before}</strong>'s
+        change name to <strong style="color:${data.color}">${data.after}</strong> ---
+        </div>`);
     }
-    $('#chatBody').append(`<div style="text-align: center;">
-      --- <strong style="color:${data.color}">${data.before}</strong>'s
-      change name to <strong style="color:${data.color}">${data.after}</strong> ---
-      </div>`);
   });
 
   // submit event on form

@@ -94,23 +94,33 @@ module.exports = (server, Session, pool) => {
         socket.emit('changeName', {
           error: 'invalid name.',
         });
-      }
-      Object.keys(users).forEach((key) => {
-        if (users[key].name === sanitizedName) {
+      } else if (sanitizedName.length > 32) {
+        socket.emit('changeName', {
+          error: 'too lengthy(max 31 char)',
+        });
+      } else {
+        try {
+          Object.keys(users).forEach((key) => {
+            if (users[key].name === sanitizedName) {
+              throw new Error();
+            }
+          });
+        } catch (e) {
           socket.emit('changeName', {
             error: 'already has name.',
           });
+          return;
         }
-      });
-      sessionData.user.name = sanitizedName;
-      sessionData.save();
-      users[socket.id].name = sanitizedName;
-      io.emit('changeName', {
-        before: originName,
-        after: sanitizedName,
-        color: users[socket.id].color,
-      });
-      updateUserList();
+        sessionData.user.name = sanitizedName;
+        sessionData.save();
+        users[socket.id].name = sanitizedName;
+        io.emit('changeName', {
+          before: originName,
+          after: sanitizedName,
+          color: users[socket.id].color,
+        });
+        updateUserList();
+      }
     });
 
     socket.on('disconnect', () => {
